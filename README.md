@@ -35,7 +35,7 @@ Scripts for re-creating manuscript data:
 
   -generate_tableS1.py (use PredictABX3_script.py to assign A/B and classify experimental data)
   
-  -*generate_tableS2.py (use PredictAABBXX6_script.py to classify compounds from DOI1, DOI2)*
+  -generate_tableS2.py (use PredictAABBXX6_script.py to classify compounds from DOI1, DOI2)
   
   -*generate_tableS3.py (use PredictAABBXX6_script.py to classify Cs2BB'Cl6 and MA2BB'Br6 compounds)*
   
