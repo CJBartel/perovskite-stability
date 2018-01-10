@@ -28,7 +28,7 @@ Scripts for classification:
   
   -PredictABX3_script.py (input CC'X3; output A, B, X, nA, nB, nX, rA, rB, rX, t, tau, t_prediction, tau_prediction, tau_probability)
   
-  -*PredictAABBXX6_script.py (input A1, A2, B1, B2, X1, X2; output nA, nB, nX, rA, rB, rX, t, tau, t_prediction, tau_prediction, tau_probability)*
+  -PredictAABBXX6_script.py (input A1, A2, B1, B2, X1, X2; output nA, nB, nX, rA, rB, rX, t, tau, t_prediction, tau_prediction, tau_probability)
   
   
 Scripts for re-creating manuscript data:
@@ -37,7 +37,7 @@ Scripts for re-creating manuscript data:
   
   -generate_tableS2.py (use PredictAABBXX6_script.py to classify compounds from DOI1, DOI2)
   
-  -*generate_tableS3.py (use PredictAABBXX6_script.py to classify Cs2BB'Cl6 and MA2BB'Br6 compounds)*
+  -generate_tableS3.py (use PredictAABBXX6_script.py to classify Cs2BB'Cl6 and MA2BB'Br6 compounds)
   
   
 Tutorial scripts
