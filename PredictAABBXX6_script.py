@@ -31,11 +31,15 @@ class PredictAABBXX6(object):
         -AA'BB'(XX')6
     """
     
-    def __init__(self, A1, A2,
-                       B1, B2,
-                       X1, X2):
+    def __init__(self, A1, A2, B1, B2, X1, X2):
         """
-        ABX3 to get A, B, oxA, oxB, rA, rB for
+        Args:
+            A1 (str) - element A
+            A2 (str) - element A' if applicable, otherwise A
+            B1 (str) - element B
+            B2 (str) - element B' if applicable, otherwise B
+            X1 (str) - element X
+            X2 (str) - element X' if applicable, otherwise X           
         """
         self.A1 = A1
         self.A2 = A2
@@ -46,22 +50,37 @@ class PredictAABBXX6(object):
         
     @property
     def As(self):
+        """
+        returns list of A cations (str)
+        """
         return list(set([self.A1, self.A2]))
     
     @property
     def Bs(self):
+        """
+        returns list of B cations (str)
+        """        
         return list(set([self.B1, self.B2]))
     
     @property
     def Xs(self):
+        """
+        returns list of X anions (str)
+        """        
         return list(set([self.X1, self.X2]))
     
     @property
     def els(self):
+        """
+        returns list of elements in As, Bs, Xs (str) order
+        """        
         return self.As + self.Bs + self.Xs
     
     @property
     def formula(self):
+        """
+        returns pretty chemical formula in AA'BB'(XX')6 format (str)
+        """
         if len(self.As) == 1:
             A_piece = ''.join([self.As[0], '2'])
         else:
@@ -78,6 +97,9 @@ class PredictAABBXX6(object):
     
     @property
     def good_form(self):
+        """
+        returns standard formula (str); alphabetized, "1s", etc.
+        """
         el_num_pairs = re.findall('([A-Z][a-z]\d*)|([A-Z]\d*)', self.formula)
         el_num_pairs = [[pair[idx] for idx in range(len(pair))if pair[idx] != ''][0] for pair in el_num_pairs]
         el_num_pairs = [pair+'1' if bool(re.search(re.compile('\d'), pair)) == False else pair for pair in el_num_pairs]
@@ -114,6 +136,9 @@ class PredictAABBXX6(object):
 
     @property
     def conc_dict(self):
+        """
+        returns dictionary of {el (str) : concentration if ABX3 (float)}
+        """
         els = self.atom_names
         conc = self.frac_atom_nums
         natoms = self.num_atoms
@@ -181,6 +206,9 @@ class PredictAABBXX6(object):
     
     @property
     def anions(self):
+        """
+        returns list of anions (str)
+        """        
         return self.Xs
     
     @property
@@ -199,6 +227,9 @@ class PredictAABBXX6(object):
 
     @property
     def site_dict(self):
+        """
+        returns dictionary of {el : [el_SITE0, el_SITE1]}
+        """
         els = self.atom_names
         nums = self.atom_nums
         site_dict = {els[idx] : ['_'.join([els[idx], str(counter)]) for counter in range(nums[idx])] for idx in range(len(els))}
@@ -239,6 +270,9 @@ class PredictAABBXX6(object):
     
     @property
     def X_charge(self):
+        """
+        returns the total charge of anions (float)
+        """
         charge = 0
         allowed_ox = self.allowed_ox
         for key in allowed_ox:
@@ -250,6 +284,9 @@ class PredictAABBXX6(object):
     
     @property
     def idx_dict(self):
+        """
+        returns dictionary of {el : [idx0, idx1, ...]}
+        """
         cations = self.cations
         allowed_ox = self.allowed_ox
         idx_dict = {}
@@ -263,6 +300,9 @@ class PredictAABBXX6(object):
     
     @property
     def bal_combos(self):
+        """
+        returns dictionary of {ox state combo (tup) : {el : [ox state by site]}}
+        """
         X_charge = self.X_charge
         allowed_ox = self.allowed_ox
         idx_dict = self.idx_dict
@@ -308,6 +348,9 @@ class PredictAABBXX6(object):
         
     @property
     def unique_combos(self):
+        """
+        returns unique version of self.bal_combos
+        """
         combos = self.bal_combos
         unique_combos = {}
         for combo in combos:
@@ -318,6 +361,9 @@ class PredictAABBXX6(object):
         
     @property
     def combos_near_isovalency(self):
+        """
+        returns dictionary of most isovalent (within element) unique combos
+        """
         combos = self.unique_combos
         cations = self.cations
         hetero_dict = {}
@@ -335,6 +381,9 @@ class PredictAABBXX6(object):
     
     @property
     def choice_dict(self):
+        """
+        returns dictionary of {el (str) : [potential ox states]}
+        """
         combos = self.combos_near_isovalency
         cations = self.cations
         choices = {cation : [] for cation in cations}
@@ -346,7 +395,10 @@ class PredictAABBXX6(object):
         return choices
     
     @property
-    def choose_combo(self):
+    def chosen_ox_states(self):
+        """
+        returns dictionary of {el (str) : chosen ox state (float)}
+        """
         cations = self.cations
         conc_dict = self.conc_dict
         els = self.els
@@ -419,7 +471,7 @@ class PredictAABBXX6(object):
         returns {el (str) : {'A_rad' : radius if A (float),
                              'B_rad' : radius if B (float)}}
         """
-        ox_dict = self.choose_combo
+        ox_dict = self.chosen_ox_states
         if isinstance(ox_dict, float):
             return np.nan
         radii_dict = {}
@@ -446,20 +498,20 @@ class PredictAABBXX6(object):
         """
         returns oxidation state assigned to A (int)
         """
-        if isinstance(self.choose_combo, float):
+        if isinstance(self.chosen_ox_states, float):
             return np.nan
         else:
-            return self.choose_combo[self.A1]
+            return self.chosen_ox_states[self.A1]
         
     @property
     def nA2(self):
         """
         returns oxidation state assigned to A (int)
         """
-        if isinstance(self.choose_combo, float):
+        if isinstance(self.chosen_ox_states, float):
             return np.nan
         else:
-            return self.choose_combo[self.A2]    
+            return self.chosen_ox_states[self.A2]    
         
     @property
     def nA(self):
@@ -492,20 +544,20 @@ class PredictAABBXX6(object):
         """
         returns oxidation state assigned to A (int)
         """
-        if isinstance(self.choose_combo, float):
+        if isinstance(self.chosen_ox_states, float):
             return np.nan
         else:
-            return self.choose_combo[self.B1]
+            return self.chosen_ox_states[self.B1]
         
     @property
     def nB2(self):
         """
         returns oxidation state assigned to A (int)
         """
-        if isinstance(self.choose_combo, float):
+        if isinstance(self.chosen_ox_states, float):
             return np.nan
         else:
-            return self.choose_combo[self.B2]   
+            return self.chosen_ox_states[self.B2]   
     
     @property
     def rA1(self):
@@ -543,7 +595,7 @@ class PredictAABBXX6(object):
     @property
     def rB1(self):
         """
-        returns predicted Shannon ionic radius for A (float)
+        returns predicted Shannon ionic radius for B (float)
         """
         if isinstance(self.AB_radii_dict, float):
             return np.nan
@@ -553,7 +605,7 @@ class PredictAABBXX6(object):
     @property
     def rB2(self):
         """
-        returns predicted Shannon ionic radius for A (float)
+        returns predicted Shannon ionic radius for B' (float)
         """
         if isinstance(self.AB_radii_dict, float):
             return np.nan
@@ -583,14 +635,14 @@ class PredictAABBXX6(object):
     @property
     def rX2(self):
         """
-        returns Shannon ionic radius for X (float)
+        returns Shannon ionic radius for X' (float)
         """
         return Shannon_dict[self.X2][self.X_ox_dict[self.X2]][6]['only_spin']
     
     @property
     def rX(self):
         """
-        returns predicted Shannon ionic radius for B (float)
+        returns predicted Shannon ionic radius for X (float)
         """
         if (len(self.As) == 1) and (len(self.Bs) == 1) and (len(self.Xs) == 1):
             CCX3 = ''.join(self.As + self.Bs + self.Xs + ['3'])
@@ -629,7 +681,7 @@ class PredictAABBXX6(object):
     @property
     def t_pred(self):
         """
-        returns the predicted Goldschmidt tolerance factor (float)
+        returns 1 if perovskite or -1 if nonperovskite by t
         """
         if (len(self.As) == 1) and (len(self.Bs) == 1) and (len(self.Xs) == 1):
             CCX3 = ''.join(self.As + self.Bs + self.Xs + ['3'])
@@ -647,6 +699,9 @@ class PredictAABBXX6(object):
         
     @property
     def tau(self):
+        """
+        returns tau
+        """
         if (len(self.As) == 1) and (len(self.Bs) == 1) and (len(self.Xs) == 1):
             CCX3 = ''.join(self.As + self.Bs + self.Xs + ['3'])
             return PredictABX3(CCX3).tau      
@@ -660,6 +715,9 @@ class PredictAABBXX6(object):
             
     @property
     def tau_pred(self):
+        """
+        returns 1 if perovskite or -1 if nonperovskite by tau
+        """
         if (len(self.As) == 1) and (len(self.Bs) == 1) and (len(self.Xs) == 1):
             CCX3 = ''.join(self.As + self.Bs + self.Xs + ['3'])
             return PredictABX3(CCX3).tau_pred        
@@ -696,7 +754,7 @@ class PredictAABBXX6(object):
         
 def main():
     obj = PredictAABBXX6('Ca', 'Ca', 'Bi', 'V', 'O', 'O')
-    obj.choose_combo
+    obj.chosen_ox_states
     return obj
     
 if __name__ == '__main__':
