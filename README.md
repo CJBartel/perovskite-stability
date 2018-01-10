@@ -42,7 +42,7 @@ Scripts for re-creating manuscript data:
   
 Tutorial scripts
 
-  -*classify_CCX3_demo.ipynb (standalone demo of CC'X3 -> classification by tau)*
+  -classify_CCX3_demo.ipynb (standalone demo of CC'X3 -> classification by tau)
   
   -*classify_AABBXX6_demo.ipynb (standalone demo of AA'BB'(XX')6 -> classification by tau)*
   
