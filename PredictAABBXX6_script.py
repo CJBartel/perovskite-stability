@@ -385,7 +385,6 @@ class PredictAABBXX6(object):
         combos = self.combos_near_isovalency
         cations = self.cations
         choices = {cation : [] for cation in cations}
-
         for cation in cations:
             for combo in combos:
                 choices[cation].extend(combos[combo][cation])
