@@ -6,7 +6,6 @@ Created on Thu Nov  9 16:02:29 2017
 """
 
 import numpy as np
-import os 
 import pandas as pd
 from make_radii_dict import ionic_radii_dict as Shannon_dict
 import math

@@ -8,8 +8,12 @@ Created on Wed Jan 10 13:16:37 2018
 from PredictAABBXX6_script import PredictAABBXX6
 import pandas as pd
 
-# read in TableS2.csv which contains our experimental dataset and associated information
-df = pd.read_csv('TableS2.csv')
+# read in TableS3.csv which contains our experimental dataset and associated information
+df = pd.read_csv('TableS3.csv')
+
+df['compound'] = [cmpd.replace('MA2', 'Ma2') for cmpd in df['compound'].values]
+df['A'] = [A if A != 'MA' else 'Ma' for A in df.A.values]
+
 df['A1'] = df['A']
 df['A2'] = df['A']
 df['B1'] = df['B1']

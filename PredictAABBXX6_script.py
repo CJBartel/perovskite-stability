@@ -6,16 +6,14 @@ Created on Thu Nov  9 16:02:29 2017
 """
 
 import numpy as np
-import os 
 import pandas as pd
 from make_radii_dict import ionic_radii_dict as Shannon_dict
-from math import gcd
 from itertools import combinations, product
 from sklearn.calibration import CalibratedClassifierCV
-import math
 from sklearn.externals import joblib
 from PredictABX3_script import PredictABX3
 import re
+import math
 
 
 class PredictAABBXX6(object):
