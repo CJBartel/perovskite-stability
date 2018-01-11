@@ -26,24 +26,22 @@ Scripts for classification:
 
   -make_radii_dict.py (converts Shannon_Effective_Ionic_Radii.csv into dictionary to be imported)
   
-  -PredictABX3_script.py (input CC'X3; output A, B, X, nA, nB, nX, rA, rB, rX, t, tau, t_prediction, tau_prediction, tau_probability)
+  -PredictPerovskites.py (contains classes for classifying single and double perovskites)
   
-  -PredictAABBXX6_script.py (input A1, A2, B1, B2, X1, X2; output nA, nB, nX, rA, rB, rX, t, tau, t_prediction, tau_prediction, tau_probability)
+	-PredictABX3(object) (input CC'X3; output A, B, X, nA, nB, nX, rA, rB, rX, t, tau, t_prediction, tau_prediction, tau_probability)
+  
+	-PredictAABBXX6(object) (input A1, A2, B1, B2, X1, X2; output nA, nB, nX, rA, rB, rX, t, tau, t_prediction, tau_prediction, tau_probability)
   
   
-Scripts for re-creating manuscript data:
+Script for re-creating manuscript data:
 
-  -generate_tableS1.py (use PredictABX3_script.py to assign A/B and classify experimental data)
-  
-  -generate_tableS2.py (use PredictAABBXX6_script.py to classify compounds from DOI1, DOI2)
-  
-  -generate_tableS3.py (use PredictAABBXX6_script.py to classify Cs2BB'Cl6 and MA2BB'Br6 compounds)
+  -regenerate_supporting_tables.ipynb
   
   
-Tutorial scripts
+Tutorial script
 
   -classify_CCX3_demo.ipynb (standalone demo of CC'X3 -> classification by tau)
-  
-  -*classify_AABBXX6_demo.ipynb (standalone demo of AA'BB'(XX')6 -> classification by tau)*
-  
-  
+
+
+Files no longer in use but potentially useful
+	-see not_in_use/
