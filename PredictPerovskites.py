@@ -19,6 +19,7 @@ import math
 import re
 from sklearn.calibration import CalibratedClassifierCV
 from itertools import combinations, product
+from math import gcd
 
 
 class PredictABX3(object):
@@ -165,6 +166,8 @@ class PredictABX3(object):
         returns {el (str) : assigned oxidation state (int)} for cations
         """
         combos = self.charge_bal_combos
+        if isinstance(combos, float):
+            return np.nan
         chi_dict = self.chi_dict
         cations = self.cations
         X = self.X
@@ -314,6 +317,16 @@ class PredictABX3(object):
             return np.nan
         else:        
             return self.chosen_ox_states[self.pred_B]
+        
+    @property
+    def nX(self):
+        """
+        returns oxidation state assigned to X (int)
+        """
+        if isinstance(self.chosen_ox_states, float):
+            return np.nan
+        else:        
+            return self.X_ox_dict[self.X]        
     
     @property
     def rA(self):
@@ -414,6 +427,8 @@ class PredictABX3(object):
         Returns:
             probability of perovskite based on tau (float)
         """
+        if math.isnan(self.tau):
+            return np.nan
         X = [[self.tau]]
         return clf.predict_proba(X)[0][1]
 
@@ -449,6 +464,27 @@ class PredictAABBXX6(object):
         self.X2 = X2
         
     @property
+    def is_single(self):
+        if (self.A1 == self.A2) and (self.B1 == self.B2) and (self.X1 == self.X2):
+            return 1
+        else:
+            return -1
+        
+    @property
+    def A(self):
+        if self.is_single == 1:
+            return self.A1
+        else:
+            return np.nan
+        
+    @property
+    def B(self):
+        if self.is_single == 1:
+            return self.B1
+        else:
+            return np.nan
+        
+    @property
     def As(self):
         """
         returns list of A cations (str)
@@ -468,6 +504,13 @@ class PredictAABBXX6(object):
         returns list of X anions (str)
         """        
         return list(set([self.X1, self.X2]))
+    
+    @property
+    def X(self):
+        if self.is_single == 1:
+            return self.Xs[0]
+        else:
+            return self.Xs
     
     @property
     def els(self):
@@ -504,6 +547,19 @@ class PredictAABBXX6(object):
         el_num_pairs = [[pair[idx] for idx in range(len(pair))if pair[idx] != ''][0] for pair in el_num_pairs]
         el_num_pairs = [pair+'1' if bool(re.search(re.compile('\d'), pair)) == False else pair for pair in el_num_pairs]
         el_num_pairs = sorted(el_num_pairs)
+        formula = ''.join(el_num_pairs)
+        nums = list(map(int, re.findall('\d+', formula)))
+        if 1 not in nums:
+            names = re.findall('[A-Z][a-z]?', formula)        
+            combos = list(combinations(nums, 2))
+            factors = [gcd(combo[0], combo[1]) for combo in combos]
+            gcf = np.min(factors)
+            new_nums = [int(np.round(num/gcf)) for num in nums]        
+            el_num_pairs = []
+            for idx in range(len(names)):
+                el_num_pairs.append(''.join([names[idx], str(new_nums[idx])]))
+            el_num_pairs = [str(pair) for pair in el_num_pairs]
+            return ''.join(sorted(el_num_pairs))        
         return ''.join(el_num_pairs)
     
     @property
@@ -752,6 +808,8 @@ class PredictAABBXX6(object):
         returns unique version of self.bal_combos
         """
         combos = self.bal_combos
+        if isinstance(combos, float) or len(combos) == 0:
+            return np.nan
         unique_combos = {}
         for combo in combos:
             if combos[combo] not in list(unique_combos.values()):
@@ -765,6 +823,8 @@ class PredictAABBXX6(object):
         returns dictionary of most isovalent (within element) unique combos
         """
         combos = self.unique_combos
+        if isinstance(combos, float) or len(combos) == 0:
+            return np.nan        
         cations = self.cations
         hetero_dict = {}
         for combo in combos:
@@ -785,6 +845,8 @@ class PredictAABBXX6(object):
         returns dictionary of {el (str) : [potential ox states (float)]}
         """
         combos = self.combos_near_isovalency
+        if isinstance(combos, float) or len(combos) == 0:
+            return np.nan        
         cations = self.cations
         choices = {cation : [] for cation in cations}
         for cation in cations:
@@ -802,6 +864,8 @@ class PredictAABBXX6(object):
         conc_dict = self.conc_dict
         els = self.els
         choices = self.choice_dict
+        if isinstance(choices, float):
+            return np.nan        
         X_ox_dict = self.X_ox_dict
         ox_dict = {}
         ox_dict[self.X1] = X_ox_dict[self.X1]
@@ -815,12 +879,18 @@ class PredictAABBXX6(object):
         else:
             unspec_els = [el for el in els if el not in ox_dict]
             unspec_charge = -np.sum([conc_dict[el]*ox_dict[el] for el in ox_dict])
-            if len(unspec_els) == 2:
+            if len(unspec_els) == 1:
+                unspec_combos = list(product(choices[unspec_els[0]]))
+            elif len(unspec_els) == 2:
                 unspec_combos = list(product(choices[unspec_els[0]], choices[unspec_els[1]]))
             elif len(unspec_els) == 3:
                 unspec_combos = list(product(choices[unspec_els[0]], choices[unspec_els[1]], choices[unspec_els[2]]))
             elif len(unspec_els) == 4:
                 unspec_combos = list(product(choices[unspec_els[0]], choices[unspec_els[1]], choices[unspec_els[2]], choices[unspec_els[3]]))
+            elif len(unspec_els) == 5:
+                unspec_combos = list(product(choices[unspec_els[0]], choices[unspec_els[1]], choices[unspec_els[2]], choices[unspec_els[3]], choices[unspec_els[4]]))  
+            elif len(unspec_els) == 6:
+                unspec_combos = list(product(choices[unspec_els[0]], choices[unspec_els[1]], choices[unspec_els[2]], choices[unspec_els[3]], choices[unspec_els[4]], choices[unspec_els[5]]))                 
             good_combos = []
             for combo in unspec_combos:
                 amt = 0
@@ -828,6 +898,8 @@ class PredictAABBXX6(object):
                     amt += conc_dict[unspec_els[idx]]*combo[idx]
                 if amt == unspec_charge:
                     good_combos.append(combo) 
+            if len(good_combos) == 0:
+                return np.nan
             biggest_spread = np.max([np.max(combo) - np.min(combo) for combo in good_combos])
             smallest_spread = np.min([np.max(combo) - np.min(combo) for combo in good_combos])
             spread_combos = [combo for combo in good_combos if np.max(combo) - np.min(combo) == biggest_spread]
@@ -897,8 +969,8 @@ class PredictAABBXX6(object):
         """
         returns oxidation state assigned to A (float)
         """
-        if (len(self.As) == 1) and (len(self.Bs) == 1) and (len(self.Xs) == 1):
-            CCX3 = ''.join(self.As + self.Bs + self.Xs)
+        if self.is_single == 1:
+            CCX3 = ''.join(self.As + self.Bs + self.Xs + ['3'])
             return PredictABX3(CCX3).nA        
         if isinstance(self.chosen_ox_states, float):
             return np.nan
@@ -910,8 +982,8 @@ class PredictAABBXX6(object):
         """
         returns oxidation state assigned to A (float)
         """
-        if (len(self.As) == 1) and (len(self.Bs) == 1) and (len(self.Xs) == 1):
-            CCX3 = ''.join(self.As + self.Bs + self.Xs)
+        if self.is_single == 1:
+            CCX3 = ''.join(self.As + self.Bs + self.Xs + ['3'])
             return PredictABX3(CCX3).nA        
         if isinstance(self.chosen_ox_states, float):
             return np.nan
@@ -923,8 +995,8 @@ class PredictAABBXX6(object):
         """
         returns predicted Shannon ionic radius for B (float)
         """
-        if (len(self.As) == 1) and (len(self.Bs) == 1) and (len(self.Xs) == 1):
-            CCX3 = ''.join(self.As + self.Bs + self.Xs)
+        if self.is_single == 1:
+            CCX3 = ''.join(self.As + self.Bs + self.Xs + ['3'])
             return PredictABX3(CCX3).nA
         if isinstance(self.AB_radii_dict, float):
             return np.nan
@@ -936,8 +1008,8 @@ class PredictAABBXX6(object):
         """
         returns oxidation state assigned to A (int)
         """
-        if (len(self.As) == 1) and (len(self.Bs) == 1) and (len(self.Xs) == 1):
-            CCX3 = ''.join(self.As + self.Bs + self.Xs)
+        if self.is_single == 1:
+            CCX3 = ''.join(self.As + self.Bs + self.Xs + ['3'])
             return PredictABX3(CCX3).nB          
         if isinstance(self.chosen_ox_states, float):
             return np.nan
@@ -949,8 +1021,8 @@ class PredictAABBXX6(object):
         """
         returns oxidation state assigned to A (int)
         """
-        if (len(self.As) == 1) and (len(self.Bs) == 1) and (len(self.Xs) == 1):
-            CCX3 = ''.join(self.As + self.Bs + self.Xs)
+        if self.is_single == 1:
+            CCX3 = ''.join(self.As + self.Bs + self.Xs + ['3'])
             return PredictABX3(CCX3).nB        
         if isinstance(self.chosen_ox_states, float):
             return np.nan
@@ -962,21 +1034,60 @@ class PredictAABBXX6(object):
         """
         returns predicted Shannon ionic radius for B (float)
         """
-        if (len(self.As) == 1) and (len(self.Bs) == 1) and (len(self.Xs) == 1):
-            CCX3 = ''.join(self.As + self.Bs + self.Xs)
+        if self.is_single == 1:
+            CCX3 = ''.join(self.As + self.Bs + self.Xs + ['3'])
             return PredictABX3(CCX3).nB        
         if isinstance(self.AB_radii_dict, float):
             return np.nan
         else:      
-            return np.mean([self.nB1, self.nB2])           
+            return np.mean([self.nB1, self.nB2])
+        
+    @property
+    def nX1(self):
+        """
+        returns oxidation state assigned to X1 (int)
+        """
+        if self.is_single == 1:
+            CCX3 = ''.join(self.As + self.Bs + self.Xs + ['3'])
+            return PredictABX3(CCX3).nX        
+        if isinstance(self.chosen_ox_states, float):
+            return np.nan
+        else:
+            return self.X_ox_dict[self.X1]    
+        
+    @property
+    def nX2(self):
+        """
+        returns oxidation state assigned to X2 (int)
+        """
+        if self.is_single == 1:
+            CCX3 = ''.join(self.As + self.Bs + self.Xs + ['3'])
+            return PredictABX3(CCX3).nX        
+        if isinstance(self.chosen_ox_states, float):
+            return np.nan
+        else:
+            return self.X_ox_dict[self.X2]          
+
+    @property
+    def nX(self):
+        """
+        returns predicted Shannon ionic radius for X (float)
+        """
+        if self.is_single == 1:
+            CCX3 = ''.join(self.As + self.Bs + self.Xs + ['3'])
+            return PredictABX3(CCX3).nX       
+        if isinstance(self.AB_radii_dict, float):
+            return np.nan
+        else:      
+            return np.mean([self.nX1, self.nX2])            
     
     @property
     def rA1(self):
         """
         returns predicted Shannon ionic radius for A (float)
         """
-        if (len(self.As) == 1) and (len(self.Bs) == 1) and (len(self.Xs) == 1):
-            CCX3 = ''.join(self.As + self.Bs + self.Xs)
+        if self.is_single == 1:
+            CCX3 = ''.join(self.As + self.Bs + self.Xs + ['3'])
             return PredictABX3(CCX3).rA             
         if isinstance(self.AB_radii_dict, float):
             return np.nan
@@ -988,8 +1099,8 @@ class PredictAABBXX6(object):
         """
         returns predicted Shannon ionic radius for A (float)
         """
-        if (len(self.As) == 1) and (len(self.Bs) == 1) and (len(self.Xs) == 1):
-            CCX3 = ''.join(self.As + self.Bs + self.Xs)
+        if self.is_single == 1:
+            CCX3 = ''.join(self.As + self.Bs + self.Xs + ['3'])
             return PredictABX3(CCX3).rA             
         if isinstance(self.AB_radii_dict, float):
             return np.nan
@@ -1001,8 +1112,8 @@ class PredictAABBXX6(object):
         """
         returns predicted Shannon ionic radius for B (float)
         """
-        if (len(self.As) == 1) and (len(self.Bs) == 1) and (len(self.Xs) == 1):
-            CCX3 = ''.join(self.As + self.Bs + self.Xs)
+        if self.is_single == 1:
+            CCX3 = ''.join(self.As + self.Bs + self.Xs + ['3'])
             return PredictABX3(CCX3).rA        
         if isinstance(self.AB_radii_dict, float):
             return np.nan
@@ -1014,8 +1125,8 @@ class PredictAABBXX6(object):
         """
         returns predicted Shannon ionic radius for B (float)
         """
-        if (len(self.As) == 1) and (len(self.Bs) == 1) and (len(self.Xs) == 1):
-            CCX3 = ''.join(self.As + self.Bs + self.Xs)
+        if self.is_single == 1:
+            CCX3 = ''.join(self.As + self.Bs + self.Xs + ['3'])
             return PredictABX3(CCX3).rB           
         if isinstance(self.AB_radii_dict, float):
             return np.nan
@@ -1027,8 +1138,8 @@ class PredictAABBXX6(object):
         """
         returns predicted Shannon ionic radius for B' (float)
         """
-        if (len(self.As) == 1) and (len(self.Bs) == 1) and (len(self.Xs) == 1):
-            CCX3 = ''.join(self.As + self.Bs + self.Xs)
+        if self.is_single == 1:
+            CCX3 = ''.join(self.As + self.Bs + self.Xs + ['3'])
             return PredictABX3(CCX3).rB           
         if isinstance(self.AB_radii_dict, float):
             return np.nan
@@ -1040,8 +1151,8 @@ class PredictAABBXX6(object):
         """
         returns predicted Shannon ionic radius for B (float)
         """
-        if (len(self.As) == 1) and (len(self.Bs) == 1) and (len(self.Xs) == 1):
-            CCX3 = ''.join(self.As + self.Bs + self.Xs)
+        if self.is_single == 1:
+            CCX3 = ''.join(self.As + self.Bs + self.Xs + ['3'])
             return PredictABX3(CCX3).rB        
         if isinstance(self.AB_radii_dict, float):
             return np.nan
@@ -1053,7 +1164,7 @@ class PredictAABBXX6(object):
         """
         returns Shannon ionic radius for X (float)
         """
-        if (len(self.As) == 1) and (len(self.Bs) == 1) and (len(self.Xs) == 1):
+        if self.is_single == 1:
             CCX3 = ''.join(self.As + self.Bs + self.Xs + ['3'])
             return PredictABX3(CCX3).rX         
         return Shannon_dict[self.X1][self.X_ox_dict[self.X1]][6]['only_spin']
@@ -1063,7 +1174,7 @@ class PredictAABBXX6(object):
         """
         returns Shannon ionic radius for X' (float)
         """
-        if (len(self.As) == 1) and (len(self.Bs) == 1) and (len(self.Xs) == 1):
+        if self.is_single == 1:
             CCX3 = ''.join(self.As + self.Bs + self.Xs + ['3'])
             return PredictABX3(CCX3).rX          
         return Shannon_dict[self.X2][self.X_ox_dict[self.X2]][6]['only_spin']
@@ -1073,7 +1184,7 @@ class PredictAABBXX6(object):
         """
         returns predicted Shannon ionic radius for X (float)
         """
-        if (len(self.As) == 1) and (len(self.Bs) == 1) and (len(self.Xs) == 1):
+        if self.is_single == 1:
             CCX3 = ''.join(self.As + self.Bs + self.Xs + ['3'])
             return PredictABX3(CCX3).rX        
         if isinstance(self.AB_radii_dict, float):
@@ -1086,7 +1197,7 @@ class PredictAABBXX6(object):
         """
         returns the predicted octahedral factor (float)
         """
-        if (len(self.As) == 1) and (len(self.Bs) == 1) and (len(self.Xs) == 1):
+        if self.is_single == 1:
             CCX3 = ''.join(self.As + self.Bs + self.Xs + ['3'])
             return PredictABX3(CCX3).mu      
         if isinstance(self.AB_radii_dict, float):
@@ -1099,7 +1210,7 @@ class PredictAABBXX6(object):
         """
         returns the predicted Goldschmidt tolerance factor (float)
         """
-        if (len(self.As) == 1) and (len(self.Bs) == 1) and (len(self.Xs) == 1):
+        if self.is_single == 1:
             CCX3 = ''.join(self.As + self.Bs + self.Xs + ['3'])
             return PredictABX3(CCX3).t        
         if isinstance(self.AB_radii_dict, float):
@@ -1112,7 +1223,7 @@ class PredictAABBXX6(object):
         """
         returns 1 if perovskite or -1 if nonperovskite by t
         """
-        if (len(self.As) == 1) and (len(self.Bs) == 1) and (len(self.Xs) == 1):
+        if self.is_single == 1:
             CCX3 = ''.join(self.As + self.Bs + self.Xs + ['3'])
             return PredictABX3(CCX3).t_pred        
         if math.isnan(self.t):
@@ -1131,7 +1242,7 @@ class PredictAABBXX6(object):
         """
         returns tau
         """
-        if (len(self.As) == 1) and (len(self.Bs) == 1) and (len(self.Xs) == 1):
+        if self.is_single == 1:
             CCX3 = ''.join(self.As + self.Bs + self.Xs + ['3'])
             return PredictABX3(CCX3).tau      
         if isinstance(self.AB_radii_dict, float):
@@ -1147,7 +1258,7 @@ class PredictAABBXX6(object):
         """
         returns 1 if perovskite or -1 if nonperovskite by tau
         """
-        if (len(self.As) == 1) and (len(self.Bs) == 1) and (len(self.Xs) == 1):
+        if self.is_single == 1:
             CCX3 = ''.join(self.As + self.Bs + self.Xs + ['3'])
             return PredictABX3(CCX3).tau_pred        
         if math.isnan(self.tau):
@@ -1174,18 +1285,23 @@ class PredictAABBXX6(object):
         Returns:
             probability of perovskite based on tau (float)
         """
-        if (len(self.As) == 1) and (len(self.Bs) == 1) and (len(self.Xs) == 1):
+        if math.isnan(self.tau):
+            return np.nan        
+        if self.is_single == 1:
             CCX3 = ''.join(self.As + self.Bs + self.Xs + ['3'])
             return PredictABX3(CCX3).tau_prob(clf) 
-        else:        
+        else:
             X = [[self.tau]]
-            return clf.predict_proba(X)[0][1]    
+            return clf.predict_proba(X)[0][1]             
+
+   
             
 def main():
     CCX3 = 'CaTiO3'
-    A1, A2, B1, B2, X1, X2 = 'Cs', 'Cs', 'Ag', 'Bi', 'Cl', 'Cl'
+    A1, A2, B1, B2, X1, X2 = 'Li', 'Li', 'Ti', 'Al', 'O', 'O'
     single_obj = PredictABX3(CCX3)
     double_obj = PredictAABBXX6(A1, A2, B1, B2, X1, X2)
+    double_obj.nA
     return single_obj, double_obj
     
 if __name__ == '__main__':

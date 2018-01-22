@@ -38,10 +38,8 @@ Script for re-creating manuscript data:
   -regenerate_supporting_tables.ipynb
   
   
-Tutorial script
+Tutorial scripts:
 
   -classify_CCX3_demo.ipynb (standalone demo of CC'X3 -> classification by tau)
-
-
-Files no longer in use but potentially useful
-	-see not_in_use/
+    
+  -classify_list_of_formulas.ipynb (add classification to pandas DataFrame using classes in PredictPerovskites.py)
