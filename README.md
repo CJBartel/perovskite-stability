@@ -1,17 +1,42 @@
 # perovskite-stability
 
+Repository associated with LINK used to predict the stability of perovskites given composition
 
-*in progress*
+## Contents
 
+# Data files from manuscript
 
-Data files from manuscript:
+  TableS1.csv 
+  '''
+  576 experimentally characterized ABX3 solids with classifications)
+  '''
 
-  -TableS1.csv (576 experimentally characterized ABX3 solids with classifications)
+  TableS2.csv
+  '''
+  comparison of tau predictions to calculated decomposition enthalpies
+  '''
   
-  -TableS2.csv (comparison of tau predictions to calculated decomposition enthalpies)
+  TableS3.csv
+  '''
+  classification of Cs2BB'Cl6 and MA2BB'Br6 compounds
+  '''
   
-  -TableS3.csv (classification of Cs2BB'Cl6 and MA2BB'Br6 compounds)
-
+# Data files needed for classification
+    
+    electronegativities.csv
+    '''
+    file of elemental electronegativities
+    '''
+    
+    Shannon_Effective_Ionic_Radii.csv
+    '''
+    file for extracting Shannon radii (from v.web.umkc.edu/vanhornj/Radii.xls)
+    '''
+    
+    TableS1.csv
+    '''
+    needed for yielding tau probabilities (see above)
+    '''
 
 Data files needed for classification:
 
