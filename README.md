@@ -60,6 +60,3 @@ Repository associated with LINK used to predict the stability of perovskites giv
 ## Script for re-creating manuscript data
 
   ### regenerate_supporting_tables.ipynb
-  
-  
-
