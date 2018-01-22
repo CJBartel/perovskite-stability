@@ -1,17 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Jan 11 17:26:52 2018
-
-@author: Chris
-"""
-
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Nov  9 16:02:29 2017
-
-@author: Chris
-"""
-
 import numpy as np
 import pandas as pd
 from make_radii_dict import ionic_radii_dict as Shannon_dict
@@ -1228,14 +1214,8 @@ class PredictAABBXX6(object):
             return PredictABX3(CCX3).t_pred        
         if math.isnan(self.t):
             return np.nan
-        else: 
-            t = self.t
-            if (t <= 0.825) or (t >= 1.059):
-                return 1
-            elif (t > 0.825) & (t < 1.059):
-                return -1
-            else:
-                return np.nan
+        else:
+            return [1 if (self.t > 0.825) and (self.t < 1.059) else -1][0]
         
     @property
     def tau(self):
@@ -1301,7 +1281,6 @@ def main():
     A1, A2, B1, B2, X1, X2 = 'Li', 'Li', 'Ti', 'Al', 'O', 'O'
     single_obj = PredictABX3(CCX3)
     double_obj = PredictAABBXX6(A1, A2, B1, B2, X1, X2)
-    double_obj.nA
     return single_obj, double_obj
     
 if __name__ == '__main__':
