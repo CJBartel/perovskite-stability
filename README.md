@@ -60,3 +60,9 @@ Repository associated with LINK used to predict the stability of perovskites giv
 ## Script for re-creating manuscript data
 
   ### regenerate_supporting_tables.ipynb
+  
+## Data file generated in tutorial
+
+  ### classified_formulas.csv
+  
+    file containing output from "classify_list_of_formulas.ipynb"
