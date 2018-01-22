@@ -7,7 +7,7 @@ Repository associated with LINK used to predict the stability of perovskites giv
 
   ### TableS1.csv 
     
-    576 experimentally characterized ABX3 solids with classifications)
+    576 experimentally characterized ABX3 solids with classifications
 
   ### TableS2.csv
 
