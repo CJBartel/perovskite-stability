@@ -2,14 +2,12 @@
 
 Repository associated with LINK used to predict the stability of perovskites given composition
 
-## Contents
 
-# Data files from manuscript
+## Data files from manuscript
 
   TableS1.csv 
-  '''
-  576 experimentally characterized ABX3 solids with classifications)
-  '''
+    
+    576 experimentally characterized ABX3 solids with classifications)
 
   TableS2.csv
   '''
@@ -21,7 +19,7 @@ Repository associated with LINK used to predict the stability of perovskites giv
   classification of Cs2BB'Cl6 and MA2BB'Br6 compounds
   '''
   
-# Data files needed for classification
+## Data files needed for classification
     
     electronegativities.csv
     '''
@@ -38,16 +36,7 @@ Repository associated with LINK used to predict the stability of perovskites giv
     needed for yielding tau probabilities (see above)
     '''
 
-Data files needed for classification:
-
-  -electronegativities.csv (list of elemental electronegativities)
-  
-  -Shannon_Effective_Ionic_Radii.csv (file for extracting Shannon radii, from v.web.umkc.edu/vanhornj/Radii.xls)
-  
-  -TableS1.csv (see above; needed for yielding tau probabilities)
-  
-  
-Scripts for classification:
+## Scripts imported for classification:
 
   -make_radii_dict.py (converts Shannon_Effective_Ionic_Radii.csv into dictionary to be imported)
   
