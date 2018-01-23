@@ -27,7 +27,7 @@ Repository associated with LINK used to predict the stability of perovskites giv
     
   ### Shannon_Effective_Ionic_Radii.csv
 
-    file for extracting Shannon radii (from v.web.umkc.edu/vanhornj/Radii.xls)
+    file for extracting Shannon radii (starting from v.web.umkc.edu/vanhornj/Radii.xls with Sn2+ from 10.1039/C5SC04845A and organic ions from 10.1039/C4SC02211D)
 
     
   ### TableS1.csv
