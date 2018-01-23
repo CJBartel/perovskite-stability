@@ -1,4 +1,4 @@
-A2BBX6,A,B1,B2,X,nA,nB1,nB2,nX,rA (Ang),rB1 (Ang),rB2 (Ang),rB (Ang),rX (Ang),t,tau,t_pred,tau_pred,tau_prob
+compound,A,B1,B2,X,nA,nB1,nB2,nX,rA (Ang),rB1 (Ang),rB2 (Ang),rB (Ang),rX (Ang),t,tau,t_pred,tau_pred,tau_prob
 Cs2AcAgCl6,Cs,Ac,Ag,Cl,1,3,1,-1,1.88,1.12,1.15,1.135,1.81,0.89,3.88,1,1,0.67
 Cs2AcAuCl6,Cs,Ac,Au,Cl,1,3,1,-1,1.88,1.12,1.37,1.245,1.81,0.85,4.12,1,1,0.56
 Cs2AcCuCl6,Cs,Ac,Cu,Cl,1,3,1,-1,1.88,1.12,0.77,0.9450000000000001,1.81,0.95,3.81,1,1,0.7
