@@ -463,14 +463,14 @@ class PredictAABBXX6(object):
     @property
     def A(self):
         if self.is_single == 1:
-            return self.A1
+            return PredictABX3(self.formula).pred_A
         else:
             return np.nan
         
     @property
     def B(self):
         if self.is_single == 1:
-            return self.B1
+            return PredictABX3(self.formula).pred_B
         else:
             return np.nan
         
