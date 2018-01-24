@@ -373,10 +373,10 @@ class PredictABX3(object):
         if isinstance(self.AB_radii_dict, float):
             return np.nan
         else:
-            try:
-                return ((1/self.mu) - (self.nA)**2 + (self.nA) * (self.rA/self.rB)/(np.log(self.rA/self.rB)))
-            except:
+            if self.rA <= self.rB:
                 return np.nan
+            else:
+                return ((1/self.mu) - (self.nA)**2 + (self.nA) * (self.rA/self.rB)/(np.log(self.rA/self.rB)))
     
     @property
     def tau_pred(self):
@@ -1238,10 +1238,10 @@ class PredictAABBXX6(object):
         if isinstance(self.AB_radii_dict, float):
             return np.nan
         else:
-            try:
-                return ((1/self.mu) - (self.nA)**2 + (self.nA) * (self.rA/self.rB)/(np.log(self.rA/self.rB)))
-            except:
+            if self.rA <= self.rB:
                 return np.nan
+            else:
+                return ((1/self.mu) - (self.nA)**2 + (self.nA) * (self.rA/self.rB)/(np.log(self.rA/self.rB)))
             
     @property
     def tau_pred(self):
@@ -1287,7 +1287,7 @@ class PredictAABBXX6(object):
    
             
 def main():
-    CCX3 = 'CaTiO3'
+    CCX3 = 'NpNbN3'
     A1, A2, B1, B2, X1, X2 = 'Li', 'Li', 'Ti', 'Al', 'O', 'O'
     single_obj = PredictABX3(CCX3)
     double_obj = PredictAABBXX6(A1, A2, B1, B2, X1, X2)
