@@ -1,6 +1,6 @@
 # perovskite-stability
 
-Repository associated with LINK used to predict the stability of perovskites given composition
+Repository associated with https://arxiv.org/abs/1801.07700 used to predict the stability of perovskites given composition
 
 
 ## Data files from manuscript
