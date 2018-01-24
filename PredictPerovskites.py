@@ -63,7 +63,8 @@ class PredictABX3(object):
                 'F' : -1,
                 'Cl' : -1,
                 'Br' : -1,
-                'I' : -1}
+                'I' : -1,
+                'Fo' : -1}
     
     @property
     def plus_one(self):
@@ -339,7 +340,10 @@ class PredictABX3(object):
         """
         returns Shannon ionic radius for X (float)
         """
-        return Shannon_dict[self.X][self.X_ox_dict[self.X]][6]['only_spin']
+        if self.X != 'N':
+            return Shannon_dict[self.X][self.X_ox_dict[self.X]][6]['only_spin']
+        else:
+            return Shannon_dict[self.X][self.X_ox_dict[self.X]][4]['only_spin']
     
     @property
     def mu(self):
@@ -1153,7 +1157,10 @@ class PredictAABBXX6(object):
         if self.is_single == 1:
             CCX3 = ''.join(self.As + self.Bs + self.Xs + ['3'])
             return PredictABX3(CCX3).rX         
-        return Shannon_dict[self.X1][self.X_ox_dict[self.X1]][6]['only_spin']
+        if self.X1 != 'N':
+            return Shannon_dict[self.X][self.X_ox_dict[self.X1]][6]['only_spin']
+        else:
+            return Shannon_dict[self.X][self.X_ox_dict[self.X1]][4]['only_spin']
     
     @property
     def rX2(self):
@@ -1163,7 +1170,10 @@ class PredictAABBXX6(object):
         if self.is_single == 1:
             CCX3 = ''.join(self.As + self.Bs + self.Xs + ['3'])
             return PredictABX3(CCX3).rX          
-        return Shannon_dict[self.X2][self.X_ox_dict[self.X2]][6]['only_spin']
+        if self.X2 != 'N':
+            return Shannon_dict[self.X][self.X_ox_dict[self.X2]][6]['only_spin']
+        else:
+            return Shannon_dict[self.X][self.X_ox_dict[self.X2]][4]['only_spin']
     
     @property
     def rX(self):
