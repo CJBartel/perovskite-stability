@@ -48,8 +48,9 @@ class PredictABX3(object):
             for idx in range(len(names)):
                 el_num_pairs.append(''.join([names[idx], str(new_nums[idx])]))
             el_num_pairs = [str(pair) for pair in el_num_pairs]
-            return ''.join(sorted(el_num_pairs))        
-        return ''.join(el_num_pairs)        
+            return ''.join(sorted(el_num_pairs))
+        else:
+            return formula
     
     @property
     def els(self):
@@ -487,14 +488,14 @@ class PredictAABBXX6(object):
     @property
     def A(self):
         if self.is_single == 1:
-            return PredictABX3(self.formula).pred_A
+            return PredictABX3(self.good_form).pred_A
         else:
             return np.nan
         
     @property
     def B(self):
         if self.is_single == 1:
-            return PredictABX3(self.formula).pred_B
+            return PredictABX3(self.good_form).pred_B
         else:
             return np.nan
         
@@ -573,8 +574,9 @@ class PredictAABBXX6(object):
             for idx in range(len(names)):
                 el_num_pairs.append(''.join([names[idx], str(new_nums[idx])]))
             el_num_pairs = [str(pair) for pair in el_num_pairs]
-            return ''.join(sorted(el_num_pairs))        
-        return ''.join(el_num_pairs)
+            return ''.join(sorted(el_num_pairs))  
+        else:
+            return formula
     
     @property
     def atom_names(self):
@@ -1311,10 +1313,15 @@ class PredictAABBXX6(object):
    
             
 def main():
-    CCX3 = 'NpNbN3'
-    A1, A2, B1, B2, X1, X2 = 'Li', 'Li', 'Ti', 'Al', 'O', 'O'
+    CCX3 = 'LaAlO3'
+    A1, A2, B1, B2, X1, X2 = 'La', 'La', 'Al', 'Al', 'O', 'O'
     single_obj = PredictABX3(CCX3)
     double_obj = PredictAABBXX6(A1, A2, B1, B2, X1, X2)
+    props = ['A', 'B',
+            'nA', 'nB', 'nX',
+            'rA', 'rB', 'rX',
+            't', 't_pred',
+            'tau', 'tau_pred']
     return single_obj, double_obj
     
 if __name__ == '__main__':
