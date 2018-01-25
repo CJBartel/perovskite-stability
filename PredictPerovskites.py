@@ -1184,9 +1184,9 @@ class PredictAABBXX6(object):
             CCX3 = ''.join(self.As + self.Bs + self.Xs + ['3'])
             return PredictABX3(CCX3).rX         
         if self.X1 != 'N':
-            return Shannon_dict[self.X][self.X_ox_dict[self.X1]][6]['only_spin']
+            return Shannon_dict[self.X1][self.X_ox_dict[self.X1]][6]['only_spin']
         else:
-            return Shannon_dict[self.X][self.X_ox_dict[self.X1]][4]['only_spin']
+            return Shannon_dict[self.X1][self.X_ox_dict[self.X1]][4]['only_spin']
     
     @property
     def rX2(self):
@@ -1197,9 +1197,9 @@ class PredictAABBXX6(object):
             CCX3 = ''.join(self.As + self.Bs + self.Xs + ['3'])
             return PredictABX3(CCX3).rX          
         if self.X2 != 'N':
-            return Shannon_dict[self.X][self.X_ox_dict[self.X2]][6]['only_spin']
+            return Shannon_dict[self.X2][self.X_ox_dict[self.X2]][6]['only_spin']
         else:
-            return Shannon_dict[self.X][self.X_ox_dict[self.X2]][4]['only_spin']
+            return Shannon_dict[self.X2][self.X_ox_dict[self.X2]][4]['only_spin']
     
     @property
     def rX(self):
@@ -1314,7 +1314,7 @@ class PredictAABBXX6(object):
             
 def main():
     CCX3 = 'LaAlO3'
-    A1, A2, B1, B2, X1, X2 = 'La', 'La', 'Al', 'Al', 'O', 'O'
+    A1, A2, B1, B2, X1, X2 = 'La', 'La', 'Al', 'In', 'O', 'O'
     single_obj = PredictABX3(CCX3)
     double_obj = PredictAABBXX6(A1, A2, B1, B2, X1, X2)
     props = ['A', 'B',
