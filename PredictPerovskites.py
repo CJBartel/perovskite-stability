@@ -644,7 +644,8 @@ class PredictAABBXX6(object):
                 'F' : -1,
                 'Cl' : -1,
                 'Br' : -1,
-                'I' : -1}
+                'I' : -1,
+                'Fo' : -1}
     
     @property
     def plus_one(self):
