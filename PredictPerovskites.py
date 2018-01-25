@@ -26,6 +26,30 @@ class PredictABX3(object):
             initial_form (str) - CC'X3 to classify
         """
         self.initial_form = initial_form
+        
+    @property
+    def good_form(self):
+        """
+        returns standard formula (str); alphabetized, "1s", etc.
+        """
+        el_num_pairs = re.findall('([A-Z][a-z]\d*)|([A-Z]\d*)', self.initial_form)
+        el_num_pairs = [[pair[idx] for idx in range(len(pair))if pair[idx] != ''][0] for pair in el_num_pairs]
+        el_num_pairs = [pair+'1' if bool(re.search(re.compile('\d'), pair)) == False else pair for pair in el_num_pairs]
+        el_num_pairs = sorted(el_num_pairs)
+        formula = ''.join(el_num_pairs)
+        nums = list(map(int, re.findall('\d+', formula)))
+        if 1 not in nums:
+            names = re.findall('[A-Z][a-z]?', formula)        
+            combos = list(combinations(nums, 2))
+            factors = [gcd(combo[0], combo[1]) for combo in combos]
+            gcf = np.min(factors)
+            new_nums = [int(np.round(num/gcf)) for num in nums]        
+            el_num_pairs = []
+            for idx in range(len(names)):
+                el_num_pairs.append(''.join([names[idx], str(new_nums[idx])]))
+            el_num_pairs = [str(pair) for pair in el_num_pairs]
+            return ''.join(sorted(el_num_pairs))        
+        return ''.join(el_num_pairs)        
     
     @property
     def els(self):
