@@ -199,7 +199,7 @@ class PredictABX3(object):
         else:
             # if one of the cations is probably 3+, let it be 3+
             if (cations[0] in plus_three) or (cations[1] in plus_three):
-                if X == 'O':
+                if self.X_ox_dict[X] == -2:
                     if (3,3) in combos:
                         combo = (3,3)
                         ox_states = dict(zip(cations, list(combo)))
@@ -218,7 +218,7 @@ class PredictABX3(object):
                     eneg_el = [el for el in cations if el != epos_el][0]
                     ox_states = {epos_el : max_ox,
                                  eneg_el : min_ox} 
-            else:
+            else:               
                 diffs = [abs(combo[0] - combo[1]) for combo in combos]
                 maxdex = [idx for idx in range(len(diffs)) if diffs[idx] == np.max(diffs)]
                 if len(maxdex) == 1:
@@ -933,6 +933,14 @@ class PredictAABBXX6(object):
                                 for idx in range(len(unspec_els)):
                                     el = unspec_els[idx]
                                     ox_dict[el] = combo[idx]
+                                return ox_dict
+                    min_ox_most_elec = np.min([combo[maxdex] for combo in spread_combos])
+                    for combo in spread_combos:
+                        if (combo[maxdex] == min_ox_most_elec):
+                            for idx in range(len(unspec_els)):
+                                el = unspec_els[idx]
+                                ox_dict[el] = combo[idx]
+                            return ox_dict
                 else:
                     combo = spread_combos[0]
                     for idx in range(len(unspec_els)):
@@ -1212,7 +1220,7 @@ class PredictAABBXX6(object):
             return PredictABX3(CCX3).rX        
         if isinstance(self.AB_radii_dict, float):
             return np.nan
-        else:      
+        else:
             return np.mean([self.rX1, self.rX2])    
     
     @property
@@ -1314,8 +1322,8 @@ class PredictAABBXX6(object):
    
             
 def main():
-    CCX3 = 'LaAlO3'
-    A1, A2, B1, B2, X1, X2 = 'La', 'La', 'Al', 'In', 'O', 'O'
+    CCX3 = 'TiTaO3'
+    A1, A2, B1, B2, X1, X2 = 'Mn', 'Mn', 'V', 'Sb', 'O', 'O'
     single_obj = PredictABX3(CCX3)
     double_obj = PredictAABBXX6(A1, A2, B1, B2, X1, X2)
     props = ['A', 'B',
