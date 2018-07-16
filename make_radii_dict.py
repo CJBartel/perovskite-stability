@@ -64,4 +64,4 @@ for el in spin_els:
                 ionic_radii_dict[el][ox][coord]['only_spin'] = ionic_radii_dict[el][ox][coord]['LS']
                 
 with open('Shannon_radii_dict.json', 'w') as f:
-    json.dump(ionic_radii_dict, f)
+    json.dump(ionic_radii_dict, f)    

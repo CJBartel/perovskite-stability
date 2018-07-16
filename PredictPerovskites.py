@@ -1,11 +1,21 @@
 import numpy as np
 import pandas as pd
+import os
 fjson = 'Shannon_radii_dict.json'
 if not os.path.exists(fjson):
     from make_radii_dict import ionic_radii_dict as Shannon_dict    
 else:
     with open(fjson) as f:
         Shannon_dict = json.load(f)
+        for k1 in Shannon_dict:
+            k2s = list(Shannon_dict[k1].keys())
+            for k2 in k2s:
+                k3s = list(Shannon_dict[k1][k2].keys())
+                Shannon_dict[k1][int(k2)] = Shannon_dict[k1][k2]
+                del Shannon_dict[k1][k2]
+                for k3 in k3s:
+                    Shannon_dict[k1][int(k2)][int(k3)] = Shannon_dict[k1][int(k2)][k3]
+                    del Shannon_dict[k1][int(k2)][k3]
 import math
 import re
 from sklearn.calibration import CalibratedClassifierCV
@@ -150,7 +160,7 @@ class PredictABX3(object):
                 allowed_ox_dict[cation] = [2]
             # otherwise, use the oxidation states that have corresponding Shannon radii                
             else:
-                allowed_ox_dict[cation] = [val for val in list(Shannon_dict[cation].keys()) if val > 0]
+                allowed_ox_dict[cation] = [int(val) for val in list(Shannon_dict[cation].keys()) if int(val) > 0]
         allowed_ox_dict[X] = [self.X_ox_dict[X]]
         return allowed_ox_dict
     
@@ -1327,15 +1337,28 @@ class PredictAABBXX6(object):
    
             
 def main():
+    import time
     CCX3 = 'TiTaO3'
     A1, A2, B1, B2, X1, X2 = 'Pb', 'Pb', 'Mg', 'Te', 'O', 'O'
     single_obj = PredictABX3(CCX3)
     double_obj = PredictAABBXX6(A1, A2, B1, B2, X1, X2)
-    props = ['A', 'B',
+    props = [
             'nA', 'nB', 'nX',
             'rA', 'rB', 'rX',
             't', 't_pred',
-            'tau', 'tau_pred']
+            'tau', 'tau_pred', 'tau_prob']
+    start = time.time()
+    for prop in props:
+        print(prop)
+        if prop == 'tau_prob':
+            clf = single_obj.calibrate_tau
+            double_obj.tau_prob(clf)
+        else:
+            getattr(double_obj, prop)
+        end = time.time()
+        print('duration = %.2f s' % (end-start))
+    
+        
     return single_obj, double_obj
     
 if __name__ == '__main__':
