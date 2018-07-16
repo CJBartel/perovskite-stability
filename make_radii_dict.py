@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import json
 
 df = pd.read_csv('Shannon_Effective_Ionic_Radii.csv')
 
@@ -61,3 +62,6 @@ for el in spin_els:
                 ionic_radii_dict[el][ox][coord]['only_spin'] = ionic_radii_dict[el][ox][coord]['HS']
             elif 'LS' in ionic_radii_dict[el][ox][coord].keys():
                 ionic_radii_dict[el][ox][coord]['only_spin'] = ionic_radii_dict[el][ox][coord]['LS']
+                
+with open('Shannon_radii_dict.json', 'w') as f:
+    json.dump(ionic_radii_dict, f)

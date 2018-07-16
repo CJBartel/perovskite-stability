@@ -1,6 +1,11 @@
 import numpy as np
 import pandas as pd
-from make_radii_dict import ionic_radii_dict as Shannon_dict
+fjson = 'Shannon_radii_dict.json'
+if not os.path.exists(fjson):
+    from make_radii_dict import ionic_radii_dict as Shannon_dict    
+else:
+    with open(fjson) as f:
+        Shannon_dict = json.load(f)
 import math
 import re
 from sklearn.calibration import CalibratedClassifierCV
@@ -1323,7 +1328,7 @@ class PredictAABBXX6(object):
             
 def main():
     CCX3 = 'TiTaO3'
-    A1, A2, B1, B2, X1, X2 = 'Mn', 'Mn', 'V', 'Sb', 'O', 'O'
+    A1, A2, B1, B2, X1, X2 = 'Pb', 'Pb', 'Mg', 'Te', 'O', 'O'
     single_obj = PredictABX3(CCX3)
     double_obj = PredictAABBXX6(A1, A2, B1, B2, X1, X2)
     props = ['A', 'B',
