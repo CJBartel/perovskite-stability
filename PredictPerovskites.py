@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-import os
+import os, json
 fjson = 'Shannon_radii_dict.json'
 if not os.path.exists(fjson):
     from make_radii_dict import ionic_radii_dict as Shannon_dict    
@@ -21,6 +21,8 @@ import re
 from sklearn.calibration import CalibratedClassifierCV
 from itertools import combinations, product
 from math import gcd
+import pickle
+np.random.seed(123)
 
 
 class PredictABX3(object):
@@ -443,11 +445,16 @@ class PredictABX3(object):
         """
         returns a calibrated classifier to yield tau probabilities
         """
-        df = pd.read_csv('TableS1.csv')
-        df['tau'] = [PredictABX3(ABX3).tau for ABX3 in df.ABX3.values]
-        X, y = df['tau'].values.reshape(-1, 1), df['exp_label'].values
-        clf = CalibratedClassifierCV(cv=3)
-        clf.fit(X, y)
+        f_clf = 'save_clf.p'
+        if not os.path.exists(f_clf):
+            df = pd.read_csv('TableS1.csv')
+            df['tau'] = [PredictABX3(ABX3).tau for ABX3 in df.ABX3.values]
+            X, y = df['tau'].values.reshape(-1, 1), df['exp_label'].values
+            clf = CalibratedClassifierCV(cv=3)
+            clf.fit(X, y)
+            pickle.dump(clf, open(f_clf, 'wb'))
+        else:
+            clf = pickle.load(open(f_clf, 'rb'))
         return clf
     
     def tau_prob(self, clf):
@@ -1311,12 +1318,7 @@ class PredictAABBXX6(object):
         """
         returns a calibrated classifier to yield tau probabilities
         """
-        df = pd.read_csv('TableS1.csv')
-        df['tau'] = [PredictABX3(ABX3).tau for ABX3 in df.ABX3.values]
-        X, y = df['tau'].values.reshape(-1, 1), df['exp_label'].values
-        clf = CalibratedClassifierCV(cv=3)
-        clf.fit(X, y)
-        return clf
+        return PredictABX3('CaTiO3').calibrate_tau
     
     def tau_prob(self, clf):
         """
