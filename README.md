@@ -3,7 +3,7 @@
 Repository associated with https://arxiv.org/abs/1801.07700 used to predict the stability of perovskites given composition
 
 
-This repository is mostly static to coincide with the cited paper. For updates since this paper, please see github.com/CJBartel/compmatscipy which contains a similar (and more up-to-date module).
+This repository is mostly static to coincide with the cited paper. For updates since this paper, please see https://github.com/CJBartel/compmatscipy which contains a similar (and more up-to-date module).
 
 
 Also, a GUI utility that implements this code is available at https://analytics-toolkit.nomad-coe.eu/home/ .
