@@ -1,6 +1,6 @@
 # perovskite-stability
 
-Repository associated with https://arxiv.org/abs/1801.07700 used to predict the stability of perovskites given composition
+Repository associated with https://doi.org/10.1126/sciadv.aav0693 used to predict the stability of perovskites given composition
 
 
 This repository is mostly static to coincide with the cited paper. For updates since this paper, please see https://github.com/CJBartel/compmatscipy which contains a similar (and more up-to-date module).
